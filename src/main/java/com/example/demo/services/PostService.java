@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.entities.ImageUtils;
 import com.example.demo.entities.Post;
 import com.example.demo.repositories.PostRepository;
 import com.example.demo.repositories.UserRepository;
@@ -8,8 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -17,7 +22,7 @@ public class PostService {
     private PostRepository postRepo;
 
     public ResponseEntity<Post> createPost (Post post) {
-        if (post.getImage() != null && post.getDescription() != null) {
+        if (post.getDescription() != null) {
             post.setLikes(0);
             postRepo.save(post);
             return ResponseEntity.status(HttpStatus.CREATED).body(null);
@@ -25,6 +30,21 @@ public class PostService {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         }
     }
+    public String uploadFile(MultipartFile file, String description) throws IOException {
+        Post post = new Post(ImageUtils.compressImage(file.getBytes()), description);
+        if (post != null){
+            postRepo.save(post);
+            return "file uploaded successfully" + post.getDescription();
+        } else {
+            return null;
+        }
+    };
+    public byte[] downloadFile(String description){
+        Optional<Post> post = postRepo.findByDescription(description);
+        byte[] images=ImageUtils.decompressImage(post.get().getImage());
+        return images;
+    }
+
     public ResponseEntity<Post> updatePost (Post post) {
         Post p = postRepo.findPostByDescription(post.getDescription());
         if (p.getImage() != null && p.getDescription() != null) {
@@ -38,7 +58,7 @@ public class PostService {
     }
     public ResponseEntity<Post> likePost (Post post) {
         Post p = postRepo.findPostByDescription(post.getDescription());
-        if (p.getImage() != null && p.getDescription() != null) {
+        if (p.getDescription() != null) {
             p.setLikes(post.getLikes() +1);
             postRepo.save(p);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
@@ -48,7 +68,7 @@ public class PostService {
     }
     public ResponseEntity<Post> dislikePost (Post post) {
         Post p = postRepo.findPostByDescription(post.getDescription());
-        if (p.getImage() != null && p.getDescription() != null) {
+        if (p.getDescription() != null) {
             p.setLikes(post.getLikes() -1);
             postRepo.save(p);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);

@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -30,23 +31,18 @@ public class PostController {
     public ResponseEntity<Post> createPost (@RequestBody Post post) {
         return postService.createPost(post);
     }
-    @PostMapping(value = "/createpost02", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> createPost(
-            @RequestPart("image") MultipartFile image,
-            @RequestPart("description") String description
-    ) {
-        try {
-            if (image != null && !image.isEmpty() && description != null && !description.isEmpty()) {
-                Post post = new Post(image, description);
-                postRepository.save(post);
-                return ResponseEntity.status(HttpStatus.CREATED).body("Post created successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid image or description");
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // Vous pouvez gérer l'exception de manière appropriée ici
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create post");
-        }
+    @PostMapping("/createpost02")
+    public ResponseEntity<?> uploadImage(@RequestParam("image")MultipartFile file, @RequestParam("description") String description) throws IOException {
+        String uploadImage = postService.uploadFile(file, description);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(uploadImage);
+    }
+    @GetMapping("/createpost02")
+    public ResponseEntity<?> downloadImage(@PathVariable String description){
+        byte[] imageData=postService.downloadFile(description);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.valueOf("image/png"))
+                .body(imageData);
     }
 
     @PostMapping("/updatepost")

@@ -7,6 +7,8 @@ public class Post {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    @Lob
+    @Column(name="imagedata", length = 1000)
     private byte[] image;
     private String description;
     private String comment;
@@ -43,6 +45,10 @@ public class Post {
         this.image = image;
         this.description = description;
         this.likes = 0;
+    }
+
+    public Post(String description) {
+        this.description = description;
     }
 
     public Post() {
