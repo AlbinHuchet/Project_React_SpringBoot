@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     public Post findPostByDescription(String Description);
-    public Post findPostByImage(String image);
+    public Post findPostByImage(byte[] image);
 }

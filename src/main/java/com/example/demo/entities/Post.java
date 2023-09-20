@@ -44,6 +44,7 @@ public class Post {
         this.description = description;
         this.likes = 0;
     }
+
     public Post() {
     }
 
