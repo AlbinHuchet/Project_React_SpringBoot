@@ -26,6 +26,12 @@ public class PostController {
     }
     @PostMapping("/updatepost")
     public ResponseEntity<Post> updatePost(@RequestBody Post post) {return postService.updatePost(post);}
+    @PostMapping("/likepost")
+    public ResponseEntity<Post> likePost(@RequestBody Post post) {return postService.likePost(post);}
+    @PostMapping("/dislikepost")
+    public ResponseEntity<Post> dislikePost(@RequestBody Post post) {return postService.dislikePost(post);}
+    @PostMapping("/commentpost")
+    public ResponseEntity<Post> commentPost(@RequestBody Post post) {return postService.comment(post);}
     @DeleteMapping("/deletepost")
     public ResponseEntity<String> deletePost(@RequestBody Post post) {return postService.deletePost(post);}
 }

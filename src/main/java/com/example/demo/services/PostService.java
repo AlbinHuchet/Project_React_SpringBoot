@@ -36,6 +36,36 @@ public class PostService {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         }
     }
+    public ResponseEntity<Post> likePost (Post post) {
+        Post p = postRepo.findPostByDescription(post.getDescription());
+        if (p.getImage() != null && p.getDescription() != null) {
+            p.setLikes(post.getLikes() +1);
+            postRepo.save(p);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+        }
+    }
+    public ResponseEntity<Post> dislikePost (Post post) {
+        Post p = postRepo.findPostByDescription(post.getDescription());
+        if (p.getImage() != null && p.getDescription() != null) {
+            p.setLikes(post.getLikes() -1);
+            postRepo.save(p);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+        }
+    }
+    public ResponseEntity<Post> comment (Post post) {
+        Post p = postRepo.findPostByDescription(post.getDescription());
+        if (p.getImage() != null && p.getDescription() != null) {
+            p.setComment(post.getComment());
+            postRepo.save(p);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+        }
+    }
     public ResponseEntity<List<Post>> findAllPosts (Model model) {
         List<Post> posts = postRepo.findAll();
         if (posts.isEmpty()) {

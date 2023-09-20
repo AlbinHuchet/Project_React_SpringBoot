@@ -7,7 +7,7 @@ public class Post {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    private String image;
+    private byte[] image;
     private String description;
     private String comment;
     private Integer likes;
@@ -15,7 +15,7 @@ public class Post {
     @ManyToOne
     private User user;
 
-    public Post(Long id, String image, String description, String comment, Integer likes, User user) {
+    public Post(Long id, byte[] image, String description, String comment, Integer likes, User user) {
         this.id = id;
         this.image = image;
         this.description = description;
@@ -24,7 +24,7 @@ public class Post {
         this.user = user;
     }
 
-    public Post(String image, String description, String comment, Integer likes, User user) {
+    public Post(byte[] image, String description, String comment, Integer likes, User user) {
         this.image = image;
         this.description = description;
         this.comment = comment;
@@ -32,14 +32,14 @@ public class Post {
         this.user = user;
     }
 
-    public Post(String image, String description, String comment, Integer likes) {
+    public Post(byte[] image, String description, String comment, Integer likes) {
         this.image = image;
         this.description = description;
         this.comment = comment;
         this.likes = likes;
     }
 
-    public Post(String image, String description) {
+    public Post(byte[] image, String description) {
         this.image = image;
         this.description = description;
         this.likes = 0;
@@ -55,11 +55,11 @@ public class Post {
         this.id = id;
     }
 
-    public String getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 
