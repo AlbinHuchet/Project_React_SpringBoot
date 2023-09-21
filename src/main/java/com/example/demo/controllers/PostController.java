@@ -31,22 +31,38 @@ public class PostController {
     public ResponseEntity<Post> createPost (@RequestBody Post post) {
         return postService.createPost(post);
     }
-    @PostMapping("/createpost02")
-    public ResponseEntity<?> uploadImage(@RequestParam("image")MultipartFile file, @RequestParam("description") String description) throws IOException {
-        String uploadImage = postService.uploadFile(file, description);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(uploadImage);
-    }
-    @GetMapping("/createpost02")
-    public ResponseEntity<?> downloadImage(@PathVariable String description){
-        byte[] imageData=postService.downloadFile(description);
+//    @PostMapping("/createpost02")
+//    public ResponseEntity<?> uploadImage(@RequestParam("image")MultipartFile file) throws IOException {
+//        String uploadImage = postService.uploadFile(file);
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body(uploadImage);
+//    }
+//    @GetMapping("/createpost02")
+//    public ResponseEntity<?> downloadImage(@PathVariable String description){
+//        byte[] imageData=postService.downloadFile(description);
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .contentType(MediaType.valueOf("image/png"))
+//                .body(imageData);
+//    }
+@PostMapping("/createpost03")
+public ResponseEntity<?> uploadImageToFIleSystem(@RequestParam("image")MultipartFile file, @RequestParam("description")String description) throws IOException {
+    String uploadImage = postService.uploadImageToFileSystem(file, description);
+    return ResponseEntity.status(HttpStatus.OK)
+            .body(uploadImage);
+}
+
+    @PostMapping("/createpost04")
+    public ResponseEntity<?> downloadImageFromFileSystem(@RequestParam String description) throws IOException {
+        byte[] imageData=postService.downloadImageFromFileSystem(description);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(imageData);
-    }
 
+    }
     @PostMapping("/updatepost")
     public ResponseEntity<Post> updatePost(@RequestBody Post post) {return postService.updatePost(post);}
+    @PostMapping("/updatepost03")
+    public ResponseEntity<Post> updatePostDescription(@RequestBody Post post, @RequestBody String description) {return postService.updatePostByImage(post, description);}
     @PostMapping("/likepost")
     public ResponseEntity<Post> likePost(@RequestBody Post post) {return postService.likePost(post);}
     @PostMapping("/dislikepost")

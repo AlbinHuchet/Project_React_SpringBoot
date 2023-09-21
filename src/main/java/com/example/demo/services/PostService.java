@@ -12,7 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class PostService {
     @Autowired
     private PostRepository postRepo;
+    private final String FOLDER_PATH="C:\\Users\\ajc\\Desktop\\coursFormation\\projets\\projets_solos\\projet_09_20\\demo\\src\\main\\resources\\images\\";
 
     public ResponseEntity<Post> createPost (Post post) {
         if (post.getDescription() != null) {
@@ -30,18 +33,37 @@ public class PostService {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
         }
     }
-    public String uploadFile(MultipartFile file, String description) throws IOException {
-        Post post = new Post(ImageUtils.compressImage(file.getBytes()), description);
-        if (post != null){
-            postRepo.save(post);
-            return "file uploaded successfully" + post.getDescription();
-        } else {
-            return null;
-        }
-    };
-    public byte[] downloadFile(String description){
-        Optional<Post> post = postRepo.findByDescription(description);
-        byte[] images=ImageUtils.decompressImage(post.get().getImage());
+//    public String uploadFile(MultipartFile file) throws IOException {
+//        Post post = new Post(ImageUtils.compressImage(file.getBytes()));
+//        if (post != null){
+//            postRepo.save(post);
+//            return "file uploaded successfully";
+//        } else {
+//            return null;
+//        }
+//    };
+//    public byte[] downloadFile(String description){
+//        Optional<Post> post = postRepo.findByDescription(description);
+//        byte[] images=ImageUtils.decompressImage(post.get().getImage());
+//        return images;
+//    }
+public String uploadImageToFileSystem(MultipartFile file, String description) throws IOException {
+    String filePath=FOLDER_PATH+file.getOriginalFilename();
+    Post p = new Post(filePath, description);
+    Post post=postRepo.save(p);
+
+    file.transferTo(new File(filePath));
+
+    if (p != null) {
+        return "file uploaded successfully : " + filePath;
+    }
+    return null;
+}
+
+    public byte[] downloadImageFromFileSystem(String description) throws IOException {
+        Optional<Post> fileData = postRepo.findByDescription(description);
+        String filePath=fileData.get().getImage();
+        byte[] images = Files.readAllBytes(new File(filePath).toPath());
         return images;
     }
 
@@ -50,6 +72,16 @@ public class PostService {
         if (p.getImage() != null && p.getDescription() != null) {
            p.setImage(post.getImage());
            p.setDescription(post.getDescription());
+            postRepo.save(p);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+        }
+    }
+    public ResponseEntity<Post> updatePostByImage (Post post, String description) {
+        Post p = postRepo.findPostByImage(post.getImage());
+        if (p.getImage() != null) {
+            p.setDescription(description);
             postRepo.save(p);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         } else {
@@ -78,7 +110,7 @@ public class PostService {
     }
     public ResponseEntity<Post> comment (Post post) {
         Post p = postRepo.findPostByDescription(post.getDescription());
-        if (p.getImage() != null && p.getDescription() != null) {
+        if (p.getDescription() != null) {
             p.setComment(post.getComment());
             postRepo.save(p);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
@@ -87,6 +119,7 @@ public class PostService {
         }
     }
     public ResponseEntity<List<Post>> findAllPosts (Model model) {
+
         List<Post> posts = postRepo.findAll();
         if (posts.isEmpty()) {
             return ResponseEntity.notFound().build(); // Retourne un code NO CONTENT si l'objet est vide.

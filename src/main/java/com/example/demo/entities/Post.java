@@ -7,9 +7,7 @@ public class Post {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    @Lob
-    @Column(name="imagedata", length = 1000)
-    private byte[] image;
+    private String image;
     private String description;
     private String comment;
     private Integer likes;
@@ -17,7 +15,7 @@ public class Post {
     @ManyToOne
     private User user;
 
-    public Post(Long id, byte[] image, String description, String comment, Integer likes, User user) {
+    public Post(Long id, String image, String description, String comment, Integer likes, User user) {
         this.id = id;
         this.image = image;
         this.description = description;
@@ -26,7 +24,7 @@ public class Post {
         this.user = user;
     }
 
-    public Post(byte[] image, String description, String comment, Integer likes, User user) {
+    public Post(String image, String description, String comment, Integer likes, User user) {
         this.image = image;
         this.description = description;
         this.comment = comment;
@@ -34,21 +32,17 @@ public class Post {
         this.user = user;
     }
 
-    public Post(byte[] image, String description, String comment, Integer likes) {
+    public Post(String image, String description, String comment, Integer likes) {
         this.image = image;
         this.description = description;
         this.comment = comment;
         this.likes = likes;
     }
 
-    public Post(byte[] image, String description) {
+    public Post(String image, String description) {
         this.image = image;
         this.description = description;
         this.likes = 0;
-    }
-
-    public Post(String description) {
-        this.description = description;
     }
 
     public Post() {
@@ -62,11 +56,11 @@ public class Post {
         this.id = id;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

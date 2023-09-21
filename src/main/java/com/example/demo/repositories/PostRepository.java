@@ -10,5 +10,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     public Optional<Post> findByDescription(String Description);
     public Post findPostByDescription(String Description);
 
-    public Post findPostByImage(byte[] image);
+    public Post findPostByImage(String image);
 }
