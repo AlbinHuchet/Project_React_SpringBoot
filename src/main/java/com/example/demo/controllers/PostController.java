@@ -55,9 +55,8 @@ public ResponseEntity<?> uploadImageToFIleSystem(@RequestParam("image")Multipart
     public ResponseEntity<?> downloadImageFromFileSystem(@RequestParam String description) throws IOException {
         byte[] imageData=postService.downloadImageFromFileSystem(description);
         return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.valueOf("image/png"))
+                .contentType(MediaType.IMAGE_JPEG)
                 .body(imageData);
-
     }
     @PostMapping("/updatepost")
     public ResponseEntity<Post> updatePost(@RequestBody Post post) {return postService.updatePost(post);}
